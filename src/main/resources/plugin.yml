@@ -7,5 +7,5 @@ description: Plugin that automates Death Swap in Minecraft
 commands:
   dswap:
     description: Starts Death Swap Game
-    usage: /dswap
+    usage: /dswap <player> <player> <maxSpread>
     aliases: []

@@ -1,7 +1,6 @@
 package com.benfel7.deathswap.commands;
 
-import org.bukkit.Bukkit;
-import org.bukkit.OfflinePlayer;
+import org.bukkit.*;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -19,6 +18,14 @@ public class DSwap implements CommandExecutor {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+
+        Player player1 = Bukkit.getPlayer(args[0]);
+        Player player2 = Bukkit.getPlayer(args[1]);
+
+        World world = player1.getWorld();
+
+        player1.sendMessage(ChatColor.RED + "Your mission is to kill " + player2.getName());
+        player2.sendMessage(ChatColor.RED + "Your mission is to kill " + player1.getName());
 
         Bukkit.getOnlinePlayers().forEach(player -> {
             player.setFoodLevel(20);
@@ -124,6 +131,16 @@ public class DSwap implements CommandExecutor {
         sb.registerNewObjective("Health", "health", "Health", HEARTS);
         Objects.requireNonNull(sb.getObjective("Health")).setDisplaySlot(DisplaySlot.PLAYER_LIST);
 
+        if (args.length == 3) {
+            int maxSpread = Integer.parseInt(args[2]);
+            Location p1random = new Location(world, (int) (Math.random() * maxSpread), (int) (Math.random() * maxSpread), (int) (Math.random() * maxSpread));
+            Location p2random = new Location(world, (int) (Math.random() * maxSpread), (int) (Math.random() * maxSpread), (int) (Math.random() * maxSpread));
+            player1.teleport(p1random);
+            player2.teleport(p2random);
+
+            int distance = (int) p1random.distance(p2random);
+        }
         return true;
     }
+
 }

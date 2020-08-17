@@ -1,0 +1,11 @@
+name: DeathSwap
+version: "0.1"
+main: com.benfel7.deathswap.DeathSwap
+api-version: "1.16"
+authors: [benfel7]
+description: Plugin that automates Death Swap in Minecraft
+commands:
+  dswap:
+    description: Starts Death Swap Game
+    usage: /dswap
+    aliases: []

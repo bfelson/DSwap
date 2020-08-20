@@ -16,21 +16,57 @@ import static org.bukkit.scoreboard.RenderType.HEARTS;
 
 public class DSwap implements CommandExecutor {
 
+    ArrayList<Player> players = new ArrayList<Player>();
+    Player player1, player2;
+    World world;
+
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
 
-        Player player1 = Bukkit.getPlayer(args[0]);
-        Player player2 = Bukkit.getPlayer(args[1]);
+        if (args.length == 0) {
+            player1 = (Player)sender;
+            if(Bukkit.getOnlinePlayers().size() != 2) {
+                sender.sendMessage("Either there are more than two players online, or you are alone, ");
+                sender.sendMessage("so you must specify with whom you want to play.");
+                return true;
+            }
+            else {
+                if(Bukkit.getOnlinePlayers().toArray()[0]==player1) {
+                    player2 = (Player) Bukkit.getOnlinePlayers().toArray()[1];
+                }
+                else {
+                    player2 = (Player) Bukkit.getOnlinePlayers().toArray()[0];
+                }
+            }
+        }
 
-        World world = player1.getWorld();
+        if (args.length == 1) {
+            player1 = (Player)sender;
+            player2 = Bukkit.getPlayer(args[0]);
+        }
+
+        else if (args.length > 1) {
+            player1 = Bukkit.getPlayer(args[0]);
+            player2 = Bukkit.getPlayer(args[1]);
+
+            if (args.length == 3) {
+                int maxSpread = Integer.parseInt(args[2]);
+                Location p1random = new Location(world, (int) (Math.random() * maxSpread), (int) (Math.random() * maxSpread), (int) (Math.random() * maxSpread));
+                Location p2random = new Location(world, (int) (Math.random() * maxSpread), (int) (Math.random() * maxSpread), (int) (Math.random() * maxSpread));
+                player1.teleport(p1random);
+                player2.teleport(p2random);
+
+                int distance = (int) p1random.distance(p2random);
+            }
+        }
+
+        for (Player player: players) {
+            player.setFoodLevel(20);
+            player.setHealth(player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getDefaultValue());
+        }
 
         player1.sendMessage(ChatColor.RED + "Your mission is to kill " + player2.getName());
         player2.sendMessage(ChatColor.RED + "Your mission is to kill " + player1.getName());
-
-        Bukkit.getOnlinePlayers().forEach(player -> {
-            player.setFoodLevel(20);
-            player.setHealth(Objects.requireNonNull(player.getAttribute(Attribute.GENERIC_MAX_HEALTH)).getDefaultValue());
-        });
 
         Scoreboard sb = new Scoreboard() {
             @Override
@@ -129,18 +165,10 @@ public class DSwap implements CommandExecutor {
             }
         };
         sb.registerNewObjective("Health", "health", "Health", HEARTS);
-        Objects.requireNonNull(sb.getObjective("Health")).setDisplaySlot(DisplaySlot.PLAYER_LIST);
+        sb.getObjective("Health").setDisplaySlot(DisplaySlot.PLAYER_LIST);
 
-        if (args.length == 3) {
-            int maxSpread = Integer.parseInt(args[2]);
-            Location p1random = new Location(world, (int) (Math.random() * maxSpread), (int) (Math.random() * maxSpread), (int) (Math.random() * maxSpread));
-            Location p2random = new Location(world, (int) (Math.random() * maxSpread), (int) (Math.random() * maxSpread), (int) (Math.random() * maxSpread));
-            player1.teleport(p1random);
-            player2.teleport(p2random);
-
-            int distance = (int) p1random.distance(p2random);
-        }
         return true;
     }
+
 
 }
